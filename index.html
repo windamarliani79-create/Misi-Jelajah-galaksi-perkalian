@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISI PERKALIAN - Petualangan Luar Angkasa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Nunito', sans-serif;
+            background: #0b0d1b;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+        .bg-space {
+            background: radial-gradient(circle at center, #1a1c3b 0%, #080914 100%);
+        }
+        .stars-bg {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+        .glow-planet {
+            filter: drop-shadow(0 0 15px rgba(129, 140, 248, 0.4));
+        }
+        .glow-gold {
+            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.5));
+        }
+        @keyframes pulseSlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pulse-slow {
+            animation: pulseSlow 3s infinite ease-in-out;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-space stars-bg min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
+
+    <!-- TOP NAVBAR -->
+    <header class="w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('hero')">
+                <div class="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-xl shadow-lg shadow-purple-500/30">
+                    <i class="fa-solid fa-rocket text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-wide bg-gradient-to-r from-amber-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">MISI PERKALIAN</h1>
+                    <span class="text-[10px] text-slate-400 font-sans tracking-wider block">PETUALANGAN MATEMATIKA SD</span>
+                </div>
+            </div>
+
+            <!-- Identitas Siswa / Akses Guru -->
+            <div class="flex items-center space-x-3">
+                <div id="studentBadge" class="hidden sm:flex items-center bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-full">
+                    <i class="fa-solid fa-user-astronaut text-purple-400 mr-2"></i>
+                    <span id="currentStudentName" class="text-sm font-semibold text-slate-200">Siswa</span>
+                    <button onclick="logoutStudent()" class="ml-2 text-xs text-rose-400 hover:text-rose-300">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+                <button onclick="openTeacherAuthModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs px-3 py-2 rounded-xl flex items-center transition font-sans font-semibold">
+                    <i class="fa-solid fa-user-tie mr-1.5"></i> Dashboard Guru
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTAINER UTAMA -->
+    <main class="max-w-5xl w-full mx-auto p-4 flex-grow flex flex-col justify-center">
+
+        <!-- 1. HALAMAN UTAMA / HERO -->
+        <section id="heroSection" class="text-center py-8">
+            <div class="mb-6 relative inline-block">
+                <div class="w-28 h-28 sm:w-36 sm:h-36 bg-indigo-600/20 rounded-full flex items-center justify-center mx-auto border-2 border-indigo-500/40 glow-planet pulse-slow">
+                    <i class="fa-solid fa-earth-asia text-6xl sm:text-7xl text-indigo-400"></i>
+                </div>
+                <span class="absolute -bottom-2 -right-2 bg-amber-400 text-slate-900 text-xs font-black px-2.5 py-1 rounded-full border-2 border-slate-900 shadow">
+                    KAPTEN PERKALIAN
+                </span>
+            </div>
+
+            <h2 class="text-3xl sm:text-5xl font-black mb-3 bg-gradient-to-r from-yellow-300 via-amber-200 to-amber-400 bg-clip-text text-transparent">
+                Jelajahi Galaksi Perkalian!
+            </h2>
+            <p class="text-slate-300 max-w-lg mx-auto text-sm sm:text-base mb-8 font-sans">
+                Taklukkan setiap planet perkalian, raih checkpoint tertinggi, dan jadilah Master Perkalian Sekolah Dasar!
+            </p>
+
+            <!-- Card Pilihan Identitas Siswa -->
+            <div id="loginCard" class="max-w-md mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl mb-8">
+                <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center justify-center">
+                    <i class="fa-solid fa-id-card text-purple-400 mr-2"></i> Pilih Identitas Namamu
+                </h3>
+                <div class="space-y-3">
+                    <select id="studentSelect" class="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3.5 text-slate-200 font-medium focus:ring-2 focus:ring-purple-500 outline-none">
+                        <option value="">-- Loading data siswa... --</option>
+                    </select>
+                    <button onclick="selectStudent()" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-95">
+                        <i class="fa-solid fa-rocket mr-2"></i> Masuk Ruang Angkasa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tombol Navigasi Mode (Muncul setelah memilih siswa) -->
+            <div id="actionButtons" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
+                <button onclick="showSection('practiceModes')" class="p-5 bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 rounded-3xl border border-emerald-400/30 text-left transition transform hover:-translate-y-1 shadow-xl group">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="p-3 bg-emerald-500/20 rounded-2xl text-emerald-300 text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-dumbbell"></i></span>
+                        <span class="text-[10px] bg-emerald-900/80 text-emerald-300 px-2.5 py-1 rounded-full font-sans font-bold">LATIHAN BEBAS</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-1">Mode Latihan</h4>
+                    <p class="text-xs text-emerald-100/70 font-sans">Latihan mandiri kapan saja. Tanpa pengaruh nilai resmi.</p>
+                </button>
+
+                <button onclick="showSection('officialExamMenu')" class="p-5 bg-gradient-to-br from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 rounded-3xl border border-amber-400/30 text-left transition transform hover:-translate-y-1 shadow-xl group">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="p-3 bg-amber-500/20 rounded-2xl text-amber-300 text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-key"></i></span>
+                        <span class="text-[10px] bg-amber-900/80 text-amber-300 px-2.5 py-1 rounded-full font-sans font-bold">SETORAN RESMI</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-1">Setoran Resmi</h4>
+                    <p class="text-xs text-amber-100/70 font-sans">Gunakan token dari guru untuk membuka checkpoint perkalian!</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. PETA CHECKPOINT / MISSION MAP -->
+        <section id="mapSection" class="hidden py-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-100 flex items-center">
+                        <i class="fa-solid fa-map-location-dot text-indigo-400 mr-2.5"></i> Peta Misi Checkpoint
+                    </h3>
+                    <p class="text-xs text-slate-400 font-sans">Luluskan setoran resmi untuk membuka planet berikutnya!</p>
+                </div>
+                <button onclick="showSection('hero')" class="text-xs text-slate-400 hover:text-slate-200 bg-slate-800 px-3 py-2 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                </button>
+            </div>
+
+            <!-- Grid Checkpoint x2 sampai x9 -->
+            <div id="checkpointGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                <!-- Digenerate secara dinamis -->
+            </div>
+        </section>
+
+        <!-- 3A. MENU PILIH MODE LATIHAN (BARU) -->
+        <section id="practiceModesSection" class="hidden py-6">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-emerald-400 flex items-center">
+                            <i class="fa-solid fa-gamepad mr-2.5"></i> Pilih Misi Latihan
+                        </h3>
+                        <p class="text-xs text-slate-400 font-sans">Ada 4 misi seru! Pilih cara bermain yang paling kamu suka.</p>
+                    </div>
+                    <button onclick="showSection('hero')" class="text-xs text-slate-400 hover:text-slate-200 bg-slate-800 px-3 py-2 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="selectPracticeMode('TEBAK')" class="p-5 bg-slate-800 hover:bg-emerald-900/40 border border-slate-700 hover:border-emerald-500 rounded-2xl text-left transition-all duration-300 hover:scale-105 shadow-lg group relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-emerald-500/10 text-7xl transition-transform group-hover:scale-110 group-hover:-rotate-12"><i class="fa-solid fa-bolt"></i></div>
+                        <h4 class="text-lg font-bold text-emerald-300 mb-1 relative z-10"><i class="fa-solid fa-bolt mr-2 text-xl"></i> 1. Kuis Cepat</h4>
+                        <p class="text-xs text-slate-400 font-sans relative z-10">Latihan kuis tebak angka klasik yang asyik.</p>
+                    </button>
+                    <button onclick="selectPracticeMode('KOSONG')" class="p-5 bg-slate-800 hover:bg-cyan-900/40 border border-slate-700 hover:border-cyan-500 rounded-2xl text-left transition-all duration-300 hover:scale-105 shadow-lg group relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-cyan-500/10 text-7xl transition-transform group-hover:scale-110 group-hover:-rotate-12"><i class="fa-solid fa-square-root-variable"></i></div>
+                        <h4 class="text-lg font-bold text-cyan-300 mb-1 relative z-10"><i class="fa-solid fa-magnifying-glass mr-2 text-xl"></i> 2. Angka Misteri</h4>
+                        <p class="text-xs text-slate-400 font-sans relative z-10">Pecahkan teka-teki angka yang hilang (_ × B = C).</p>
+                    </button>
+                    <button onclick="selectPracticeMode('MEMORI')" class="p-5 bg-slate-800 hover:bg-purple-900/40 border border-slate-700 hover:border-purple-500 rounded-2xl text-left transition-all duration-300 hover:scale-105 shadow-lg group relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-purple-500/10 text-7xl transition-transform group-hover:scale-110 group-hover:rotate-12"><i class="fa-solid fa-clone"></i></div>
+                        <h4 class="text-lg font-bold text-purple-300 mb-1 relative z-10"><i class="fa-solid fa-clone mr-2 text-xl"></i> 3. Kartu Memori</h4>
+                        <p class="text-xs text-slate-400 font-sans relative z-10">Uji daya ingatmu! Cocokkan soal dengan jawaban yang tepat.</p>
+                    </button>
+                    <button onclick="selectPracticeMode('ROKET')" class="p-5 bg-slate-800 hover:bg-rose-900/40 border border-slate-700 hover:border-rose-500 rounded-2xl text-left transition-all duration-300 hover:scale-105 shadow-lg group relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-rose-500/10 text-7xl transition-transform group-hover:scale-110 group-hover:rotate-12"><i class="fa-solid fa-rocket"></i></div>
+                        <h4 class="text-lg font-bold text-rose-300 mb-1 relative z-10"><i class="fa-solid fa-rocket mr-2 text-xl"></i> 4. Balap Roket</h4>
+                        <p class="text-xs text-slate-400 font-sans relative z-10">Jawab super cepat dalam 30 detik agar roket meluncur!</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3B. MENU MODE LATIHAN (PILIH TABEL) -->
+        <section id="practiceMenuSection" class="hidden py-6">
+            <div class="max-w-2xl mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-emerald-400 flex items-center">
+                            <i class="fa-solid fa-list-ol mr-2.5"></i> Pilih Tabel Perkalian
+                        </h3>
+                        <p class="text-xs text-slate-400 font-sans">Tentukan angka yang ingin kamu latih.</p>
+                    </div>
+                    <button onclick="showSection('practiceModes')" class="text-xs text-slate-400 hover:text-slate-200 bg-slate-800 px-3 py-2 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Batal
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                    <!-- Tombol Pilihan Latihan x2 - x9 -->
+                    <script>
+                        for(let i=2; i<=9; i++){
+                            document.write(`
+                                <button onclick="startPractice(${i})" class="p-4 bg-slate-800 hover:bg-emerald-600/30 border border-slate-700 hover:border-emerald-500 rounded-2xl font-bold text-lg text-emerald-300 transition flex flex-col items-center">
+                                    <span class="text-xs text-slate-400 mb-1 font-sans">Tabel</span>
+                                    ×${i}
+                                </button>
+                            `);
+                        }
+                    </script>
+                </div>
+
+                <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700/50 flex items-center space-x-3 text-xs text-slate-400 font-sans">
+                    <i class="fa-solid fa-circle-info text-emerald-400 text-lg"></i>
+                    <span>Hasil mode latihan <b>tidak memengaruhi</b> status checkpoint setoran resmi. Latihlah sebanyak mungkin!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ARENA SOAL (DIGUNAKAN SAMA OLEH LATIHAN & SETORAN RESMI) -->
+        <section id="quizArenaSection" class="hidden py-4 max-w-xl mx-auto w-full">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative">
+                
+                <!-- Status Bar Quiz -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <span id="quizTypeBadge" class="text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">LATIHAN</span>
+                        <div class="text-xs text-slate-400 font-sans mt-1" id="questionProgress">Soal 1 dari 20</div>
+                    </div>
+
+                    <!-- Timer Count (Hanya Setoran) -->
+                    <div id="timerBox" class="flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-2xl text-amber-400">
+                        <i class="fa-solid fa-stopwatch text-lg animate-pulse"></i>
+                        <span id="timerText" class="font-bold text-xl">10s</span>
+                    </div>
+                </div>
+
+                <!-- Kartu Soal Utama -->
+                <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-indigo-500/40 rounded-2xl p-8 text-center mb-6 shadow-inner relative overflow-hidden">
+                    <div id="questionText" class="text-5xl sm:text-6xl font-black text-amber-300 tracking-wider">
+                        5 × 6
+                    </div>
+                </div>
+
+                <!-- Pilihan Jawaban -->
+                <div id="answersGrid" class="grid grid-cols-2 gap-3 mb-6">
+                    <!-- Option Buttons via JS -->
+                </div>
+
+                <!-- Visual Helper Toggle (Hanya di Mode Latihan) -->
+                <div id="practiceHelperBox" class="text-center">
+                    <button onclick="toggleVisualHelp()" class="text-xs text-indigo-400 hover:text-indigo-300 font-sans underline">
+                        <i class="fa-regular fa-lightbulb"></i> <span id="visualHelpBtnText">Tampilkan Bantuan Visual</span>
+                    </button>
+                    <div id="visualHelper" class="hidden mt-3 p-3 bg-indigo-950/60 rounded-xl border border-indigo-800 text-xs text-indigo-200 font-sans">
+                        <p id="visualExplanation" class="mb-2 font-semibold"></p>
+                        <div id="dotsContainer" class="flex flex-wrap justify-center gap-1.5"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ARENA KARTU MEMORI -->
+        <section id="memoryArenaSection" class="hidden py-4 max-w-2xl mx-auto w-full">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">KARTU MEMORI</span>
+                    <button onclick="showSection('practiceModes')" class="text-xs text-slate-400 hover:text-slate-200 bg-slate-800 px-3 py-2 rounded-xl border border-slate-700">
+                        Selesai
+                    </button>
+                </div>
+                <div class="text-center mb-4 text-slate-300 font-bold text-sm">
+                    Cocokkan soal dengan jawabannya! Pasangan Ditemukan: <span id="memoryScore" class="text-purple-400">0</span> / 6
+                </div>
+                <div id="memoryGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                    <!-- Cards via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ARENA BALAP ROKET -->
+        <section id="rocketArenaSection" class="hidden py-4 max-w-xl mx-auto w-full">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">BALAP ROKET</span>
+                    <div class="text-amber-400 font-bold bg-amber-500/10 px-3 py-1 rounded-xl">
+                        <i class="fa-solid fa-clock mr-1"></i> <span id="rocketTime">30s</span>
+                    </div>
+                </div>
+
+                <div class="flex relative h-64 bg-slate-800 rounded-2xl border-2 border-slate-700 mb-6 p-4">
+                    <!-- Rocket Track -->
+                    <div class="w-full flex flex-col justify-end items-center relative">
+                        <div class="absolute top-0 w-full border-t border-dashed border-slate-500 text-center text-[10px] text-slate-500 pt-1">GARIS FINISH</div>
+                        <i id="rocketIcon" class="fa-solid fa-rocket text-5xl text-rose-500 transform -translate-y-0 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(244,63,94,0.8)]"></i>
+                        <div class="mt-2 text-xs font-bold text-slate-400">Skor: <span id="rocketScore">0</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-rose-500/40 rounded-2xl p-4 text-center mb-4 shadow-inner">
+                    <div id="rocketQuestionText" class="text-4xl font-black text-rose-300 tracking-wider">
+                        5 × 6
+                    </div>
+                </div>
+
+                <div id="rocketAnswersGrid" class="grid grid-cols-3 gap-2">
+                    <!-- Option Buttons via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. FORM INPUT TOKEN SETORAN RESMI -->
+        <section id="officialExamMenuSection" class="hidden py-6">
+            <div class="max-w-md mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center">
+                <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 border border-amber-500/30">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-100 mb-2">Masukan Token Setoran</h3>
+                <p class="text-xs text-slate-400 font-sans mb-6">Mintalah kode Token unik kepada Gurumu untuk memulai ujian evaluasi resmi.</p>
+
+                <div class="space-y-4">
+                    <input type="text" id="inputToken" placeholder="Contoh: X7K9A" class="w-full text-center tracking-widest text-xl font-bold bg-slate-800 border border-slate-700 rounded-2xl p-4 text-amber-300 uppercase focus:ring-2 focus:ring-amber-400 outline-none">
+                    <button onclick="startOfficialExam()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-lg rounded-2xl shadow-lg transition transform active:scale-95">
+                        Mulai Setoran Resmi
+                    </button>
+                    <button onclick="showSection('hero')" class="text-xs text-slate-400 hover:text-slate-200">
+                        Kembali ke Menu
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. MODAL HASIL SELESAI QUIZ -->
+        <div id="quizResultModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl relative">
+                <div id="resultBadgeIcon" class="w-20 h-20 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border-2 border-amber-500/40 glow-gold">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <h3 id="resultModalTitle" class="text-2xl font-bold text-slate-100 mb-1">Luar Biasa!</h3>
+                <p id="resultModalSubtitle" class="text-xs text-slate-400 font-sans mb-6">Sesi Setoran Resmi Selesai</p>
+
+                <div class="grid grid-cols-3 gap-2 bg-slate-800/80 p-4 rounded-2xl mb-6 border border-slate-700">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block font-sans">BENAR</span>
+                        <span id="modalCorrectCount" class="text-xl font-bold text-emerald-400">0</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block font-sans">SALAH</span>
+                        <span id="modalWrongCount" class="text-xl font-bold text-rose-400">0</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 block font-sans">NILAI</span>
+                        <span id="modalFinalScore" class="text-xl font-bold text-amber-400">0</span>
+                    </div>
+                </div>
+
+                <div id="checkpointStatusBox" class="hidden p-3 rounded-xl mb-6 text-xs font-sans font-bold">
+                    <!-- Status Lulus / Tidak -->
+                </div>
+
+                <button onclick="closeResultModal()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-lg">
+                    Kembali ke Peta Misi
+                </button>
+            </div>
+        </div>
+
+        <!-- 7. DASHBOARD KHUSUS GURU -->
+        <section id="teacherDashboardSection" class="hidden py-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+                <!-- Header Teacher -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800 mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-chalkboard-user mr-2.5"></i> Dashboard Guru & Evaluasi
+                        </h3>
+                        <p class="text-xs text-slate-400 font-sans">Kelola data kelas, sesi setoran resmi, dan pantau progres siswa.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="showSection('hero')" class="text-xs text-slate-400 hover:text-slate-200 bg-slate-800 px-3 py-2 rounded-xl border border-slate-700">
+                            <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar Dashboard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs Navigasi Guru -->
+                <div class="flex border-b border-slate-800 mb-6 text-sm">
+                    <button onclick="switchTeacherTab('stats')" id="tabBtnStats" class="py-2.5 px-4 font-bold border-b-2 border-amber-400 text-amber-400">
+                        <i class="fa-solid fa-chart-pie mr-1.5"></i> Ringkasan Kelas
+                    </button>
+                    <button onclick="switchTeacherTab('students')" id="tabBtnStudents" class="py-2.5 px-4 font-bold text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-users mr-1.5"></i> Data Siswa
+                    </button>
+                    <button onclick="switchTeacherTab('sessions')" id="tabBtnSessions" class="py-2.5 px-4 font-bold text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-key mr-1.5"></i> Buat Sesi Token
+                    </button>
+                </div>
+
+                <!-- TAB 1: RINGKASAN & REKAP -->
+                <div id="teacherTabStats" class="space-y-6">
+                    <!-- Cards Summary -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-sans block mb-1">Total Siswa</span>
+                            <span id="statTotalStudents" class="text-3xl font-bold text-slate-100">0</span>
+                        </div>
+                        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-sans block mb-1">Tuntas (Tabel 2-9)</span>
+                            <span id="statMasteredStudents" class="text-3xl font-bold text-emerald-400">0</span>
+                        </div>
+                        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-sans block mb-1">Sesi Aktif</span>
+                            <span id="statActiveSessions" class="text-3xl font-bold text-amber-400">0</span>
+                        </div>
+                        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-sans block mb-1">Total Setoran Selesai</span>
+                            <span id="statTotalSubmissions" class="text-3xl font-bold text-indigo-400">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Live Result Setoran -->
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-300 mb-3 flex items-center">
+                            <i class="fa-solid fa-clock-rotate-left text-indigo-400 mr-2"></i> Riwayat Setoran Resmi Siswa
+                        </h4>
+                        <div class="overflow-x-auto bg-slate-800/40 rounded-2xl border border-slate-800">
+                            <table class="w-full text-left text-xs text-slate-300 font-sans">
+                                <thead class="bg-slate-800 text-slate-400 uppercase">
+                                    <tr>
+                                        <th class="p-3">Nama Siswa</th>
+                                        <th class="p-3">Materi</th>
+                                        <th class="p-3">Benar / Total</th>
+                                        <th class="p-3">Nilai</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3">Waktu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="submissionsTableBody" class="divide-y divide-slate-800">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: MANAJEMEN DATA SISWA -->
+                <div id="teacherTabStudents" class="hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between gap-3">
+                        <h4 class="text-sm font-bold text-slate-300">Daftar Siswa Kelas 5</h4>
+                        <button onclick="openAddStudentModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-xl font-bold">
+                            <i class="fa-solid fa-plus mr-1"></i> Tambah Siswa Baru
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto bg-slate-800/40 rounded-2xl border border-slate-800">
+                        <table class="w-full text-left text-xs text-slate-300 font-sans">
+                            <thead class="bg-slate-800 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-3">Nama Siswa</th>
+                                    <th class="p-3">Status Checkpoint (x2 - x9)</th>
+                                    <th class="p-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsManagerTableBody" class="divide-y divide-slate-800">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: BUAT SESI TOKEN SETORAN -->
+                <div id="teacherTabSessions" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Form Buat Sesi Baru -->
+                        <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700">
+                            <h4 class="text-sm font-bold text-amber-400 mb-4">Buat Sesi Setoran Resmi Baru</h4>
+                            
+                            <div class="space-y-4 font-sans text-xs">
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Materi Tabel Perkalian:</label>
+                                    <select id="sessionTableSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200">
+                                        <option value="2">Perkalian × 2</option>
+                                        <option value="3">Perkalian × 3</option>
+                                        <option value="4">Perkalian × 4</option>
+                                        <option value="5">Perkalian × 5</option>
+                                        <option value="6">Perkalian × 6</option>
+                                        <option value="7">Perkalian × 7</option>
+                                        <option value="8">Perkalian × 8</option>
+                                        <option value="9">Perkalian × 9</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Durasi Waktu Per Soal:</label>
+                                    <select id="sessionTimerSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200">
+                                        <option value="15">15 Detik (Sedang)</option>
+                                        <option value="10" selected>10 Detik (Standar)</option>
+                                        <option value="7">7 Detik (Cepat / Tantangan)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Batas Minimal Kelulusan (%):</label>
+                                    <input type="number" id="sessionPassingScore" value="80" min="50" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200">
+                                    <span class="text-[10px] text-slate-500 block mt-1">80% = Minimal 16 dari 20 soal dijawab benar.</span>
+                                </div>
+
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Token Sesi (Opsional):</label>
+                                    <div class="flex space-x-2">
+                                        <input type="text" id="sessionCustomToken" placeholder="Contoh: KELAS5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-200 uppercase font-bold tracking-widest focus:ring-2 focus:ring-amber-400 outline-none" maxlength="8">
+                                        <button type="button" onclick="generateRandomTokenField()" class="bg-slate-700 hover:bg-slate-600 px-4 rounded-xl text-amber-400 font-bold" title="Acak Token">
+                                            <i class="fa-solid fa-dice"></i>
+                                        </button>
+                                    </div>
+                                    <span class="text-[10px] text-slate-500 block mt-1">Ketik token sendiri, atau klik dadu untuk acak. Kosongkan jika ingin sistem mengacaknya.</span>
+                                </div>
+
+                                <button onclick="createNewSession()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition mt-2">
+                                    <i class="fa-solid fa-key mr-1"></i> Buat Sesi Setoran
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Daftar Sesi Token Aktif -->
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-300 mb-3">Daftar Sesi Token</h4>
+                            <div id="sessionsListContainer" class="space-y-3">
+                                <!-- Dynamic Session Cards -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center p-4 border-t border-slate-800 text-xs text-slate-500 font-sans mt-8">
+        MISI PERKALIAN &copy; 2026 • Alat Bantu Pembelajaran Matematika SD Interaktif
+    </footer>
+
+    <!-- MODAL AUTH GURU -->
+    <div id="teacherAuthModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-xs w-full text-center shadow-2xl">
+            <i class="fa-solid fa-lock text-3xl text-amber-400 mb-3"></i>
+            <h4 class="text-lg font-bold text-slate-200 mb-1">PIN Akses Guru</h4>
+            <p class="text-xs text-slate-400 font-sans mb-4">Masukkan PIN Pengaman untuk masuk dashboard Guru.</p>
+            
+            <input type="password" id="teacherPinInput" placeholder="Sandi: 1234" class="w-full text-center tracking-widest text-lg bg-slate-800 border border-slate-700 rounded-2xl p-3 text-amber-300 mb-4 focus:ring-2 focus:ring-amber-400 outline-none">
+            
+            <div class="flex space-x-2">
+                <button onclick="closeTeacherAuthModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-400 font-bold rounded-xl text-xs">Batal</button>
+                <button onclick="verifyTeacherPin()" class="w-1/2 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs">Masuk</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH SISWA -->
+    <div id="addStudentModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+            <h4 class="text-lg font-bold text-slate-200 mb-3">Tambah Siswa Baru</h4>
+            <input type="text" id="newStudentName" placeholder="Nama Lengkap Siswa" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 mb-4 font-sans focus:ring-2 focus:ring-indigo-500 outline-none">
+            <div class="flex space-x-2">
+                <button onclick="closeAddStudentModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-400 font-bold rounded-xl text-xs">Batal</button>
+                <button onclick="saveNewStudent()" class="w-1/2 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-xs">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT SISWA -->
+    <div id="editStudentModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+            <h4 class="text-lg font-bold text-slate-200 mb-3">Edit Nama Siswa</h4>
+            <input type="text" id="editStudentName" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 mb-4 font-sans focus:ring-2 focus:ring-amber-500 outline-none">
+            <div class="flex space-x-2">
+                <button onclick="closeEditStudentModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-400 font-bold rounded-xl text-xs">Batal</button>
+                <button onclick="updateStudentName()" class="w-1/2 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULE & LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Variables Environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'misi-perkalian-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "demo-key",
+            authDomain: "demo.firebaseapp.com",
+            projectId: "demo-project",
+            storageBucket: "demo.appspot.com",
+            messagingSenderId: "0000000",
+            appId: "1:00000:web:0000"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // App States
+        window.db = db;
+        window.appId = appId;
+        
+        let studentsList = [];
+        let sessionsList = [];
+        let submissionsList = [];
+
+        let currentStudent = null;
+        let activeQuizState = null;
+        let quizTimerInterval = null;
+
+        let currentPracticeMode = 'TEBAK';
+        let memoryState = { cards: [], flipped: [], matchedCount: 0 };
+        let rocketState = { table: 0, timer: 30, score: 0, interval: null, target: 15 };
+
+        // Path Helpers (Rules Strict)
+        const getPublicColl = (collName) => collection(db, 'artifacts', appId, 'public', 'data', collName);
+        const getPublicDoc = (collName, id) => doc(db, 'artifacts', appId, 'public', 'data', collName, id);
+
+        // Init Auth
+        window.addEventListener('load', async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.warn("Auth Fallback:", err);
+            }
+
+            // Realtime Listeners
+            initDatabaseListeners();
+        });
+
+        function initDatabaseListeners() {
+            // Listen Students
+            onSnapshot(getPublicColl('students'), (snapshot) => {
+                studentsList = [];
+                snapshot.forEach(doc => {
+                    studentsList.push({ id: doc.id, ...doc.data() });
+                });
+                renderStudentsDropdown();
+                renderStudentsManager();
+                renderStats();
+            }, (err) => console.log("Error snapshot students", err));
+
+            // Listen Sessions
+            onSnapshot(getPublicColl('sessions'), (snapshot) => {
+                sessionsList = [];
+                snapshot.forEach(doc => {
+                    sessionsList.push({ id: doc.id, ...doc.data() });
+                });
+                renderSessionsList();
+                renderStats();
+            }, (err) => console.log("Error snapshot sessions", err));
+
+            // Listen Submissions
+            onSnapshot(getPublicColl('submissions'), (snapshot) => {
+                submissionsList = [];
+                snapshot.forEach(doc => {
+                    submissionsList.push({ id: doc.id, ...doc.data() });
+                });
+                renderSubmissionsTable();
+                renderStats();
+            }, (err) => console.log("Error snapshot submissions", err));
+        }
+
+        // Default Seeding jika siswa belum ada
+        async function checkSeedDefaultStudents() {
+            if (studentsList.length === 0) {
+                const sampleStudents = ["Andi Pratama", "Budi Santoso", "Citra Lestari", "Dina Rahma", "Eko Wijaya"];
+                for (let name of sampleStudents) {
+                    await addDoc(getPublicColl('students'), {
+                        name: name,
+                        checkpoints: { x2: "NOT_ATTEMPTED", x3: "NOT_ATTEMPTED", x4: "NOT_ATTEMPTED", x5: "NOT_ATTEMPTED", x6: "NOT_ATTEMPTED", x7: "NOT_ATTEMPTED", x8: "NOT_ATTEMPTED", x9: "NOT_ATTEMPTED" },
+                        createdAt: new Date().toISOString()
+                    });
+                }
+            }
+        }
+
+        // Render Dropdown Siswa
+        function renderStudentsDropdown() {
+            const select = document.getElementById('studentSelect');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Pilih Namamu --</option>';
+            studentsList.forEach(std => {
+                const opt = document.createElement('option');
+                opt.value = std.id;
+                opt.textContent = std.name;
+                select.appendChild(opt);
+            });
+
+            if (studentsList.length === 0) {
+                checkSeedDefaultStudents();
+            }
+        }
+
+        // Action: Select Student
+        window.selectStudent = function() {
+            const select = document.getElementById('studentSelect');
+            const stdId = select.value;
+            if (!stdId) {
+                alert("Silakan pilih namamu terlebih dahulu!");
+                return;
+            }
+            currentStudent = studentsList.find(s => s.id === stdId);
+            
+            document.getElementById('currentStudentName').innerText = currentStudent.name;
+            document.getElementById('studentBadge').classList.remove('hidden');
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('actionButtons').classList.remove('hidden');
+            
+            showSection('map');
+        };
+
+        window.logoutStudent = function() {
+            currentStudent = null;
+            document.getElementById('studentBadge').classList.add('hidden');
+            document.getElementById('loginCard').classList.remove('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            showSection('hero');
+        };
+
+        // Render Map Checkpoints (x2-x9)
+        function renderMapCheckpoints() {
+            const grid = document.getElementById('checkpointGrid');
+            if (!grid || !currentStudent) return;
+            grid.innerHTML = '';
+
+            const planets = [
+                { table: 2, name: "Merkurius", color: "from-blue-600 to-indigo-800" },
+                { table: 3, name: "Venus", color: "from-amber-600 to-orange-800" },
+                { table: 4, name: "Bumi", color: "from-emerald-600 to-teal-800" },
+                { table: 5, name: "Mars", color: "from-rose-600 to-red-800" },
+                { table: 6, name: "Jupiter", color: "from-orange-600 to-amber-900" },
+                { table: 7, name: "Saturnus", color: "from-purple-600 to-indigo-900" },
+                { table: 8, name: "Uranus", color: "from-cyan-600 to-blue-900" },
+                { table: 9, name: "Neptunus", color: "from-indigo-600 to-purple-900" }
+            ];
+
+            planets.forEach(p => {
+                const key = `x${p.table}`;
+                const status = currentStudent.checkpoints?.[key] || 'NOT_ATTEMPTED';
+
+                let statusBadge = '<span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-sans">Belum Setor</span>';
+                let icon = '<i class="fa-solid fa-lock text-slate-500 text-xl"></i>';
+                let borderStyle = 'border-slate-800 opacity-70';
+
+                if (status === 'PASSED') {
+                    statusBadge = '<span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-sans font-bold">LULUS ✓</span>';
+                    icon = '<i class="fa-solid fa-circle-check text-emerald-400 text-2xl"></i>';
+                    borderStyle = 'border-emerald-500/50 glow-gold';
+                } else if (status === 'FAILED') {
+                    statusBadge = '<span class="text-[10px] bg-rose-500/20 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded-full font-sans font-bold">ULANGI</span>';
+                    icon = '<i class="fa-solid fa-triangle-exclamation text-rose-400 text-2xl"></i>';
+                    borderStyle = 'border-rose-500/40';
+                }
+
+                const card = document.createElement('div');
+                card.className = `bg-slate-900/90 border ${borderStyle} rounded-3xl p-4 text-center flex flex-col justify-between items-center relative overflow-hidden shadow-xl`;
+                card.innerHTML = `
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br ${p.color} flex items-center justify-center text-white font-black text-xl mb-2 shadow">
+                        ×${p.table}
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-200 mb-1">${p.name}</h4>
+                    <div class="mb-3">${statusBadge}</div>
+                    <div class="mt-auto">${icon}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Section Switcher Helper
+        window.showSection = function(sectionName) {
+            document.getElementById('heroSection').classList.add('hidden');
+            document.getElementById('mapSection').classList.add('hidden');
+            document.getElementById('practiceModesSection').classList.add('hidden');
+            document.getElementById('practiceMenuSection').classList.add('hidden');
+            document.getElementById('quizArenaSection').classList.add('hidden');
+            document.getElementById('memoryArenaSection').classList.add('hidden');
+            document.getElementById('rocketArenaSection').classList.add('hidden');
+            document.getElementById('officialExamMenuSection').classList.add('hidden');
+            document.getElementById('teacherDashboardSection').classList.add('hidden');
+
+            if (sectionName === 'hero') {
+                document.getElementById('heroSection').classList.remove('hidden');
+            } else if (sectionName === 'map') {
+                document.getElementById('heroSection').classList.remove('hidden');
+                document.getElementById('mapSection').classList.remove('hidden');
+                renderMapCheckpoints();
+            } else if (sectionName === 'practiceModes') {
+                document.getElementById('practiceModesSection').classList.remove('hidden');
+            } else if (sectionName === 'practiceMenu') {
+                document.getElementById('practiceMenuSection').classList.remove('hidden');
+            } else if (sectionName === 'quiz') {
+                document.getElementById('quizArenaSection').classList.remove('hidden');
+            } else if (sectionName === 'memory') {
+                document.getElementById('memoryArenaSection').classList.remove('hidden');
+            } else if (sectionName === 'rocket') {
+                document.getElementById('rocketArenaSection').classList.remove('hidden');
+            } else if (sectionName === 'officialExamMenu') {
+                document.getElementById('officialExamMenuSection').classList.remove('hidden');
+            } else if (sectionName === 'teacher') {
+                document.getElementById('teacherDashboardSection').classList.remove('hidden');
+            }
+        };
+
+        // MODE LATIHAN LOGIC
+        window.selectPracticeMode = function(mode) {
+            currentPracticeMode = mode;
+            showSection('practiceMenu');
+        };
+
+        window.startPractice = function(table) {
+            if (currentPracticeMode === 'TEBAK' || currentPracticeMode === 'KOSONG') {
+                activeQuizState = {
+                    type: 'PRACTICE',
+                    subType: currentPracticeMode,
+                    table: table,
+                    questions: generate20Questions(table),
+                    currentIndex: 0,
+                    correctCount: 0,
+                    wrongCount: 0,
+                    timer: null,
+                    timerDuration: 0
+                };
+
+                let badgeName = currentPracticeMode === 'KOSONG' ? 'ANGKA KOSONG' : 'TEBAK CEPAT';
+                document.getElementById('quizTypeBadge').innerText = `${badgeName} ×${table}`;
+                document.getElementById('quizTypeBadge').className = "text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                document.getElementById('timerBox').classList.add('hidden');
+                document.getElementById('practiceHelperBox').classList.remove('hidden');
+
+                showSection('quiz');
+                loadCurrentQuestion();
+            } else if (currentPracticeMode === 'MEMORI') {
+                startMemoryGame(table);
+            } else if (currentPracticeMode === 'ROKET') {
+                startRocketGame(table);
+            }
+        };
+
+        // MODE SETORAN RESMI LOGIC
+        window.startOfficialExam = function() {
+            const tokenInput = document.getElementById('inputToken').value.trim().toUpperCase();
+            if (!tokenInput) {
+                alert("Masukkan token sesi dari guru!");
+                return;
+            }
+
+            const session = sessionsList.find(s => s.token === tokenInput && s.status === 'ACTIVE');
+            if (!session) {
+                alert("Token tidak valid atau sesi sudah ditutup oleh Guru!");
+                return;
+            }
+
+            // CEK: Mencegah siswa menggunakan token yang sama jika sudah pernah menyetor
+            const alreadySubmitted = submissionsList.find(sub => sub.sessionId === session.id && sub.studentId === currentStudent.id);
+            if (alreadySubmitted) {
+                alert("Kamu sudah menyetor ujian dengan Token ini! \nJika belum lulus, mintalah Token Sesi Baru kepada Guru untuk mengulang.");
+                document.getElementById('inputToken').value = '';
+                return;
+            }
+
+            activeQuizState = {
+                type: 'OFFICIAL',
+                sessionId: session.id,
+                table: session.table,
+                timerDuration: session.timePerQuestion || 10,
+                passingScore: session.passingScore || 80,
+                questions: generate20Questions(session.table),
+                currentIndex: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                timerLeft: session.timePerQuestion || 10
+            };
+
+            // Kosongkan input token setelah ujian dimulai
+            document.getElementById('inputToken').value = ''; 
+
+            document.getElementById('quizTypeBadge').innerText = `SETORAN RESMI ×${session.table}`;
+            document.getElementById('quizTypeBadge').className = "text-[10px] font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30";
+            document.getElementById('timerBox').classList.remove('hidden');
+            document.getElementById('practiceHelperBox').classList.add('hidden');
+
+            showSection('quiz');
+            loadCurrentQuestion();
+        };
+
+        // Generator 20 Soal Acak
+        function generate20Questions(table) {
+            let list = [];
+            for (let i = 1; i <= 20; i++) {
+                let multiplier = (i % 10) + 1; // 1 to 10 twice
+                list.push({ num1: table, num2: multiplier, answer: table * multiplier });
+            }
+            // Shuffle
+            return list.sort(() => Math.random() - 0.5);
+        }
+
+        // Tampilkan Soal
+        function loadCurrentQuestion() {
+            clearInterval(quizTimerInterval);
+            hideVisualHelp();
+
+            const state = activeQuizState;
+            if (state.currentIndex >= state.questions.length) {
+                finishQuiz();
+                return;
+            }
+
+            const q = state.questions[state.currentIndex];
+            document.getElementById('questionProgress').innerText = `Soal ${state.currentIndex + 1} dari ${state.questions.length}`;
+            
+            let options = [];
+            
+            // Logika Angka Kosong vs Tebak Biasa
+            if (state.subType === 'KOSONG') {
+                document.getElementById('questionText').innerText = `_ × ${q.num2} = ${q.answer}`;
+                options = [q.num1];
+                while (options.length < 4) {
+                    let wrong = q.num1 + (Math.floor(Math.random() * 7) - 3);
+                    if (wrong > 0 && wrong <= 10 && !options.includes(wrong)) {
+                        options.push(wrong);
+                    }
+                }
+            } else {
+                document.getElementById('questionText').innerText = `${q.num1} × ${q.num2}`;
+                options = [q.answer];
+                while (options.length < 4) {
+                    let wrong = q.answer + (Math.floor(Math.random() * 9) - 4);
+                    if (wrong > 0 && !options.includes(wrong)) {
+                        options.push(wrong);
+                    }
+                }
+            }
+
+            options.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('answersGrid');
+            grid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-slate-800 hover:bg-indigo-600/30 border-2 border-slate-700 hover:border-indigo-500 text-white font-bold text-2xl rounded-2xl transition transform active:scale-95";
+                btn.innerText = opt;
+                btn.onclick = () => answerQuestion(opt);
+                grid.appendChild(btn);
+            });
+
+            // Start Timer jika Official
+            if (state.type === 'OFFICIAL') {
+                state.timerLeft = state.timerDuration;
+                document.getElementById('timerText').innerText = `${state.timerLeft}s`;
+
+                quizTimerInterval = setInterval(() => {
+                    state.timerLeft--;
+                    document.getElementById('timerText').innerText = `${state.timerLeft}s`;
+                    if (state.timerLeft <= 0) {
+                        clearInterval(quizTimerInterval);
+                        state.wrongCount++;
+                        state.currentIndex++;
+                        loadCurrentQuestion();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Answer Event
+        function answerQuestion(selected) {
+            clearInterval(quizTimerInterval);
+            const state = activeQuizState;
+            const q = state.questions[state.currentIndex];
+
+            // Validasi berdasarkan tipe (Tebak atau Kosong)
+            let isCorrect = false;
+            if (state.subType === 'KOSONG') {
+                isCorrect = (selected === q.num1);
+            } else {
+                isCorrect = (selected === q.answer);
+            }
+
+            if (isCorrect) {
+                state.correctCount++;
+            } else {
+                state.wrongCount++;
+            }
+
+            state.currentIndex++;
+            loadCurrentQuestion();
+        }
+
+        // --- SUB GAME: KARTU MEMORI ---
+        function startMemoryGame(table) {
+            let mults = [];
+            while(mults.length < 6) {
+                let r = Math.floor(Math.random() * 10) + 1;
+                if(!mults.includes(r)) mults.push(r);
+            }
+            let cards = [];
+            mults.forEach((m, idx) => {
+                cards.push({ id: `Q${idx}`, text: `${table} × ${m}`, matchId: idx, isFlipped: false, isMatched: false });
+                cards.push({ id: `A${idx}`, text: `${table * m}`, matchId: idx, isFlipped: false, isMatched: false });
+            });
+            cards.sort(() => Math.random() - 0.5);
+            memoryState = { cards, flipped: [], matchedCount: 0 };
+            document.getElementById('memoryScore').innerText = '0';
+            renderMemoryGrid();
+            showSection('memory');
+        }
+
+        function renderMemoryGrid() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            memoryState.cards.forEach((c, index) => {
+                const btn = document.createElement('button');
+                btn.className = `h-24 sm:h-28 rounded-2xl font-bold text-xl sm:text-2xl transition transform duration-300 flex items-center justify-center border-2 shadow-lg ${c.isMatched ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300 opacity-50 cursor-default' : (c.isFlipped ? 'bg-purple-600 border-purple-400 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700')}`;
+                btn.innerText = (c.isFlipped || c.isMatched) ? c.text : '?';
+                btn.onclick = () => flipMemoryCard(index);
+                grid.appendChild(btn);
+            });
+        }
+
+        window.flipMemoryCard = function(index) {
+            let card = memoryState.cards[index];
+            if(card.isFlipped || card.isMatched || memoryState.flipped.length >= 2) return;
+            
+            card.isFlipped = true;
+            memoryState.flipped.push({ card, index });
+            renderMemoryGrid();
+
+            if (memoryState.flipped.length === 2) {
+                setTimeout(checkMemoryMatch, 800);
+            }
+        };
+
+        function checkMemoryMatch() {
+            let [c1, c2] = memoryState.flipped;
+            if (c1.card.matchId === c2.card.matchId) {
+                memoryState.cards[c1.index].isMatched = true;
+                memoryState.cards[c2.index].isMatched = true;
+                memoryState.matchedCount++;
+                document.getElementById('memoryScore').innerText = memoryState.matchedCount;
+                if (memoryState.matchedCount >= 6) {
+                    setTimeout(() => {
+                        alert("Hebat! Kamu berhasil mencocokkan semua kartu!");
+                        showSection('practiceModes');
+                    }, 500);
+                }
+            } else {
+                memoryState.cards[c1.index].isFlipped = false;
+                memoryState.cards[c2.index].isFlipped = false;
+            }
+            memoryState.flipped = [];
+            renderMemoryGrid();
+        }
+
+        // --- SUB GAME: BALAP ROKET ---
+        function startRocketGame(table) {
+            rocketState = { table, timer: 30, score: 0, target: 15, interval: null };
+            document.getElementById('rocketScore').innerText = '0';
+            document.getElementById('rocketTime').innerText = '30s';
+            updateRocketPosition();
+            showSection('rocket');
+            loadRocketQuestion();
+            
+            clearInterval(rocketState.interval);
+            rocketState.interval = setInterval(() => {
+                rocketState.timer--;
+                document.getElementById('rocketTime').innerText = rocketState.timer + 's';
+                if(rocketState.timer <= 0) {
+                    clearInterval(rocketState.interval);
+                    alert('Waktu Habis! Skor Roket Kamu: ' + rocketState.score);
+                    showSection('practiceModes');
+                }
+            }, 1000);
+        }
+
+        function loadRocketQuestion() {
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const ans = rocketState.table * num2;
+            document.getElementById('rocketQuestionText').innerText = `${rocketState.table} × ${num2}`;
+            
+            let options = [ans];
+            while (options.length < 3) {
+                let wrong = ans + (Math.floor(Math.random() * 9) - 4);
+                if (wrong > 0 && !options.includes(wrong)) {
+                    options.push(wrong);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('rocketAnswersGrid');
+            grid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 bg-slate-800 hover:bg-rose-600/30 border-2 border-slate-700 hover:border-rose-500 text-white font-bold text-xl rounded-xl transition active:scale-95";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === ans) {
+                        rocketState.score++;
+                        document.getElementById('rocketScore').innerText = rocketState.score;
+                        updateRocketPosition();
+                    }
+                    loadRocketQuestion(); // lanjut soal berikutnya langsung tanpa peduli benar/salah
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function updateRocketPosition() {
+            const icon = document.getElementById('rocketIcon');
+            // Roket naik maksimal ke atas arena, max height ~ 180px
+            let percent = Math.min((rocketState.score / rocketState.target), 1);
+            let translate = percent * -180; // dalam pixel (negatif agar naik ke atas)
+            icon.style.transform = `translateY(${translate}px)`;
+        }
+
+
+        // Quiz Selesai & Simpan Hasil
+        async function finishQuiz() {
+            clearInterval(quizTimerInterval);
+            const state = activeQuizState;
+            const total = state.questions.length;
+            const score = Math.round((state.correctCount / total) * 100);
+
+            document.getElementById('modalCorrectCount').innerText = state.correctCount;
+            document.getElementById('modalWrongCount').innerText = state.wrongCount;
+            document.getElementById('modalFinalScore').innerText = score;
+
+            const checkpointBox = document.getElementById('checkpointStatusBox');
+
+            if (state.type === 'OFFICIAL' && currentStudent) {
+                const isPassed = score >= state.passingScore;
+
+                if (isPassed) {
+                    checkpointBox.className = "p-3 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-xl mb-6 text-xs font-sans font-bold block";
+                    checkpointBox.innerText = `SELAMAT! Kamu LULUS & Checkpoint Perkalian ×${state.table} Terbuka! 🎉`;
+                } else {
+                    checkpointBox.className = "p-3 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-xl mb-6 text-xs font-sans font-bold block";
+                    checkpointBox.innerText = `Nilaimu belum memenuhi syarat kelulusan (${state.passingScore}%). Ayo coba lagi! 💪`;
+                }
+
+                // Update Status Checkpoint Siswa
+                // PERBAIKAN: Jangan ubah status menjadi FAILED jika sebelumnya sudah pernah PASSED
+                const oldStatus = currentStudent.checkpoints?.[`x${state.table}`];
+                let newStatus = isPassed ? 'PASSED' : 'FAILED';
+                
+                if (oldStatus === 'PASSED') {
+                    newStatus = 'PASSED';
+                }
+
+                const stdDocRef = getPublicDoc('students', currentStudent.id);
+                
+                let updatedCheckpoints = { ...(currentStudent.checkpoints || {}) };
+                updatedCheckpoints[`x${state.table}`] = newStatus;
+
+                await updateDoc(stdDocRef, {
+                    checkpoints: updatedCheckpoints
+                });
+
+                // Simpan Data Submission Resmi
+                await addDoc(getPublicColl('submissions'), {
+                    sessionId: state.sessionId,
+                    studentId: currentStudent.id,
+                    studentName: currentStudent.name,
+                    table: state.table,
+                    score: score,
+                    correctCount: state.correctCount,
+                    wrongCount: state.wrongCount,
+                    totalQuestions: total,
+                    isPassed: isPassed,
+                    submittedAt: new Date().toISOString()
+                });
+
+            } else {
+                checkpointBox.className = "p-3 bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 rounded-xl mb-6 text-xs font-sans font-bold block";
+                checkpointBox.innerText = "Sesi latihan mandiri selesai! Teruslah berlatih agar makin mahir.";
+            }
+
+            document.getElementById('quizResultModal').classList.remove('hidden');
+        }
+
+        window.closeResultModal = function() {
+            document.getElementById('quizResultModal').classList.add('hidden');
+            showSection('map');
+        };
+
+        // Bantuan Visual Penjumlahan Berulang (Mode Latihan)
+        window.toggleVisualHelp = function() {
+            const helper = document.getElementById('visualHelper');
+            if (helper.classList.contains('hidden')) {
+                showVisualHelp();
+            } else {
+                hideVisualHelp();
+            }
+        };
+
+        function showVisualHelp() {
+            if (!activeQuizState) return;
+            const q = activeQuizState.questions[activeQuizState.currentIndex];
+            if (!q) return;
+
+            document.getElementById('visualHelper').classList.remove('hidden');
+            document.getElementById('visualHelpBtnText').innerText = "Sembunyikan Bantuan";
+            document.getElementById('visualExplanation').innerText = `${q.num1} × ${q.num2} artinya menjumlahkan ${q.num2} sebanyak ${q.num1} kali:`;
+
+            const container = document.getElementById('dotsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < q.num1; i++) {
+                const group = document.createElement('div');
+                group.className = "bg-slate-800 p-1.5 rounded-lg border border-indigo-700 flex gap-1 items-center";
+                for (let j = 0; j < q.num2; j++) {
+                    const star = document.createElement('i');
+                    star.className = "fa-solid fa-star text-amber-400 text-[10px]";
+                    group.appendChild(star);
+                }
+                container.appendChild(group);
+            }
+        }
+
+        function hideVisualHelp() {
+            const helper = document.getElementById('visualHelper');
+            if (helper) helper.classList.add('hidden');
+            const btnText = document.getElementById('visualHelpBtnText');
+            if (btnText) btnText.innerText = "Tampilkan Bantuan Visual";
+        }
+
+        // ================= GURU & DASHBOARD LOGIC =================
+        window.openTeacherAuthModal = function() {
+            document.getElementById('teacherAuthModal').classList.remove('hidden');
+        };
+        window.closeTeacherAuthModal = function() {
+            document.getElementById('teacherAuthModal').classList.add('hidden');
+        };
+        window.verifyTeacherPin = function() {
+            const pin = document.getElementById('teacherPinInput').value;
+            if (pin === "1234" || pin === "guru") {
+                closeTeacherAuthModal();
+                showSection('teacher');
+            } else {
+                alert("PIN Salah! Gunakan PIN default: 1234");
+            }
+        };
+
+        window.switchTeacherTab = function(tabName) {
+            // 1. Sembunyikan semua konten tab
+            ['teacherTabStats', 'teacherTabStudents', 'teacherTabSessions'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            // 2. Reset semua tombol tab ke warna abu-abu (tidak aktif)
+            ['tabBtnStats', 'tabBtnStudents', 'tabBtnSessions'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.remove('border-b-2', 'border-amber-400', 'text-amber-400');
+                    btn.classList.add('text-slate-400', 'hover:text-slate-200');
+                }
+            });
+
+            // 3. Tampilkan tab dan aktifkan tombol yang diklik
+            if (tabName === 'stats') {
+                document.getElementById('teacherTabStats').classList.remove('hidden');
+                const btn = document.getElementById('tabBtnStats');
+                btn.classList.remove('text-slate-400', 'hover:text-slate-200');
+                btn.classList.add('border-b-2', 'border-amber-400', 'text-amber-400');
+            } else if (tabName === 'students') {
+                document.getElementById('teacherTabStudents').classList.remove('hidden');
+                const btn = document.getElementById('tabBtnStudents');
+                btn.classList.remove('text-slate-400', 'hover:text-slate-200');
+                btn.classList.add('border-b-2', 'border-amber-400', 'text-amber-400');
+            } else if (tabName === 'sessions') {
+                document.getElementById('teacherTabSessions').classList.remove('hidden');
+                const btn = document.getElementById('tabBtnSessions');
+                btn.classList.remove('text-slate-400', 'hover:text-slate-200');
+                btn.classList.add('border-b-2', 'border-amber-400', 'text-amber-400');
+            }
+        };
+
+        // Render Stats
+        function renderStats() {
+            document.getElementById('statTotalStudents').innerText = studentsList.length;
+            
+            // Count mastered students (x2 to x9 all PASSED)
+            let mastered = 0;
+            studentsList.forEach(s => {
+                let allPassed = true;
+                for (let i = 2; i <= 9; i++) {
+                    if (s.checkpoints?.[`x${i}`] !== 'PASSED') allPassed = false;
+                }
+                if (allPassed) mastered++;
+            });
+            document.getElementById('statMasteredStudents').innerText = mastered;
+
+            const activeSess = sessionsList.filter(s => s.status === 'ACTIVE').length;
+            document.getElementById('statActiveSessions').innerText = activeSess;
+            document.getElementById('statTotalSubmissions').innerText = submissionsList.length;
+        }
+
+        // Render Tabel Submissions Guru
+        function renderSubmissionsTable() {
+            const body = document.getElementById('submissionsTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+
+            const sorted = [...submissionsList].sort((a,b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+            sorted.forEach(sub => {
+                const tr = document.createElement('tr');
+                const statusBadge = sub.isPassed 
+                    ? '<span class="text-emerald-400 font-bold">LULUS</span>' 
+                    : '<span class="text-rose-400 font-bold">TIDAK LULUS</span>';
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-200">${sub.studentName}</td>
+                    <td class="p-3">Perkalian ×${sub.table}</td>
+                    <td class="p-3">${sub.correctCount} / ${sub.totalQuestions}</td>
+                    <td class="p-3 font-bold text-amber-400">${sub.score}</td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3 text-slate-500">${new Date(sub.submittedAt).toLocaleTimeString()}</td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        // Render Data Siswa Manager Guru
+        function renderStudentsManager() {
+            const body = document.getElementById('studentsManagerTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+
+            studentsList.forEach(std => {
+                const tr = document.createElement('tr');
+                
+                let checkpointsBadges = '';
+                for (let i = 2; i <= 9; i++) {
+                    const st = std.checkpoints?.[`x${i}`] || 'NOT_ATTEMPTED';
+                    let c = 'bg-slate-800 text-slate-500';
+                    if (st === 'PASSED') c = 'bg-emerald-500/20 text-emerald-400 font-bold';
+                    if (st === 'FAILED') c = 'bg-rose-500/20 text-rose-400 font-bold';
+                    checkpointsBadges += `<span class="inline-block px-1.5 py-0.5 text-[9px] rounded ${c} mr-1">×${i}</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-200">${std.name}</td>
+                    <td class="p-3">${checkpointsBadges}</td>
+                    <td class="p-3 text-right flex justify-end space-x-4">
+                        <button onclick="openEditStudentModal('${std.id}', '${std.name.replace(/'/g, "\\'")}')" class="text-amber-400 hover:text-amber-300" title="Edit Nama Siswa">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteStudent('${std.id}')" class="text-rose-400 hover:text-rose-300" title="Hapus Siswa">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        window.openAddStudentModal = function() {
+            document.getElementById('addStudentModal').classList.remove('hidden');
+        };
+        window.closeAddStudentModal = function() {
+            document.getElementById('addStudentModal').classList.add('hidden');
+        };
+        window.saveNewStudent = async function() {
+            const name = document.getElementById('newStudentName').value.trim();
+            if (!name) return;
+
+            await addDoc(getPublicColl('students'), {
+                name: name,
+                checkpoints: { x2: "NOT_ATTEMPTED", x3: "NOT_ATTEMPTED", x4: "NOT_ATTEMPTED", x5: "NOT_ATTEMPTED", x6: "NOT_ATTEMPTED", x7: "NOT_ATTEMPTED", x8: "NOT_ATTEMPTED", x9: "NOT_ATTEMPTED" },
+                createdAt: new Date().toISOString()
+            });
+
+            document.getElementById('newStudentName').value = '';
+            closeAddStudentModal();
+        };
+
+        // --- FUNGSI EDIT NAMA SISWA ---
+        let editingStudentId = null;
+
+        window.openEditStudentModal = function(id, currentName) {
+            editingStudentId = id;
+            document.getElementById('editStudentName').value = currentName;
+            document.getElementById('editStudentModal').classList.remove('hidden');
+        };
+
+        window.closeEditStudentModal = function() {
+            editingStudentId = null;
+            document.getElementById('editStudentModal').classList.add('hidden');
+        };
+
+        window.updateStudentName = async function() {
+            if (!editingStudentId) return;
+            const newName = document.getElementById('editStudentName').value.trim();
+            if (!newName) return;
+
+            await updateDoc(getPublicDoc('students', editingStudentId), {
+                name: newName
+            });
+
+            closeEditStudentModal();
+        };
+        // ------------------------------
+
+        window.deleteStudent = async function(id) {
+            if (confirm("Yakin ingin menghapus siswa ini?")) {
+                await deleteDoc(getPublicDoc('students', id));
+            }
+        };
+
+        // Buat Sesi Token Baru oleh Guru
+        window.generateRandomTokenField = function() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let token = '';
+            for (let i = 0; i < 5; i++) {
+                token += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('sessionCustomToken').value = token;
+        };
+
+        window.createNewSession = async function() {
+            const table = parseInt(document.getElementById('sessionTableSelect').value);
+            const timer = parseInt(document.getElementById('sessionTimerSelect').value);
+            const passing = parseInt(document.getElementById('sessionPassingScore').value);
+
+            let token = document.getElementById('sessionCustomToken').value.trim().toUpperCase();
+
+            // Jika form token kosong, generate otomatis 5 karakter
+            if (!token) {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                for (let i = 0; i < 5; i++) {
+                    token += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+            }
+
+            // Validasi: Cek apakah token tersebut sudah ada dan masih aktif
+            const existingSession = sessionsList.find(s => s.token === token && s.status === 'ACTIVE');
+            if (existingSession) {
+                alert(`Token '${token}' sedang aktif digunakan. Silakan ketik atau acak token yang berbeda!`);
+                return;
+            }
+
+            await addDoc(getPublicColl('sessions'), {
+                token: token,
+                table: table,
+                timePerQuestion: timer,
+                passingScore: passing,
+                status: 'ACTIVE',
+                createdAt: new Date().toISOString()
+            });
+
+            document.getElementById('sessionCustomToken').value = ''; // Bersihkan input setelah berhasil
+            alert(`Sesi Baru Berhasil Dibuat!\nToken Sesi: ${token}\nBagikan kode ini kepada siswa.`);
+        };
+
+        // Render Sesi Token Guru
+        function renderSessionsList() {
+            const container = document.getElementById('sessionsListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            sessionsList.forEach(sess => {
+                const div = document.createElement('div');
+                const isActive = sess.status === 'ACTIVE';
+
+                div.className = `p-4 rounded-2xl border ${isActive ? 'bg-slate-800/80 border-amber-500/40' : 'bg-slate-900 border-slate-800 opacity-60'} flex justify-between items-center`;
+                div.innerHTML = `
+                    <div>
+                        <span class="text-xs text-amber-400 font-black tracking-widest block">${sess.token}</span>
+                        <span class="text-[11px] text-slate-300 font-sans block">Perkalian ×${sess.table} • ${sess.timePerQuestion}s / soal • KKM: ${sess.passingScore}%</span>
+                    </div>
+                    <div>
+                        ${isActive 
+                            ? `<button onclick="closeSession('${sess.id}')" class="text-xs text-rose-400 hover:underline font-sans">Tutup Sesi</button>` 
+                            : `<span class="text-[10px] text-slate-500 font-sans">Selesai</span>`}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.closeSession = async function(id) {
+            await updateDoc(getPublicDoc('sessions', id), { status: 'CLOSED' });
+        };
+    </script>
+</body>
+</html>
